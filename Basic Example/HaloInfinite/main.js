@@ -29,16 +29,74 @@ if(!gameOver) {
 }
 }
 
+document.addEventListener("keydown", event =>{
+   keys[event.key] = true; 
+});
+
+document.addEventListener("keyup", event =>{
+    keys[event.key] = false; 
+});
+
+function handlePlayerMovement() {
+    if(keys.ArrowLeft && playerX > 0) {
+        playerX -=3;
+    }
+
+    if(keys.ArrowRight && playerX < gameWidth-playerWidth) {
+        playerX +=3;
+    }
+
+    if(keys.ArrowUp && playerY > 0) {
+        playerY -=3;
+    }
+
+    if(keys.ArrowDown && playerY < gameHeight-playerHeight) {
+        playerY +=3;
+    }
+}
+
+function moveEnemyTowardsPlayer() {
+    const enemySpeed = 1;
+    const dx = playerX - enemyX;
+    const dy = playerY - enemyY;
+    const distance = Math.sqrt(dx*dx+dy*dy);
+    if (distance>0){
+        enemyX += dx/distance * enemySpeed;
+        enemyY += dy/distance * enemySpeed;
+    }
+}
+
+function updatePlayerPosition(){
+    player.style.left = `${playerX}px`
+    player.style.top = `${playerY}px`
+}
+
+function updateEnemyPosition(){
+    player.style.left = `${enemyX}px`
+    player.style.top = `${enemyY}px`
+}
+
+function checkCollisions() {
+    const collisionDistance = playerWidth/2 + enemy.offsetWidth/2;
+    const dx = playerX - enemyX;
+    const dy = playerY - enemyY;
+    const distance = Math.sqrt(dx*dx+dy*dy);
+    if(distance< collisionDistance) {
+        player.style.opacity = 0;
+        gameOver = true;
+    }
+}
+
 function endGame() {
     alert("GAME OVER");
     resetGame();
 }
 
 function resetGame() {
-    let playerX = 0;
-    let playerY = 75;
-    let enemyX = Math.random() * (gameWidth - playerWidth);
-    let enemyY = Math.random() * (gameHeight - playerHeight);
+    playerX = 0;
+    playerY = 75;
+    enemyX = Math.random() * (gameWidth - playerWidth);
+    enemyY = Math.random() * (gameHeight - playerHeight);
     keys = {};
     player.style.opacity = 1;
     gameOver = false;
